@@ -1,24 +1,32 @@
-/-
-Formal proof of `erdos_1100.variants.eq_omega` from google-deepmind/formal-conjectures
-(file `FormalConjectures/ErdosProblems/1100.lean`, commit 5c783f7227e86c989fd592da04915f377dc6cb23).
+module
 
-The definition `tauPerp` and the statement below are copied verbatim from that file.
-
-Proof idea (Erdős–Hall [ErHa78, p. 480]): take primes `p₁ < p₂ < ⋯` with each `pᵢ` larger than
-`p₁ ⋯ pᵢ₋₁`. The sorted divisor list of `n * p` (for a prime `p > n`) is the divisor list of `n`
-followed by `p` times it, so exactly one new coprime adjacent pair appears, namely `(n, p)`.
--/
-import Mathlib
+public import Mathlib
 
 /-!
 # Erdős Problem 1100: `τ⊥(n) = ω(n)` for some squarefree `n` with `ω(n) = k`, for every `k`
+
+Proof development for `erdos_1100.variants.eq_omega` from google-deepmind/formal-conjectures
+(`FormalConjectures/ErdosProblems/1100.lean`). The definition `tauPerp` is copied verbatim from
+there; `Challenge.lean` contains the same definition and the statement.
+
+Proof idea (Erdős–Hall [ErHa78, p. 480]): take primes `p₁ < p₂ < ⋯` with each `pᵢ` larger than
+`p₁ ⋯ pᵢ₋₁`. For a prime `p > n`, the sorted divisor list of `n * p` is the divisor list of `n`
+followed by `p` times it, so exactly one new coprime adjacent pair appears, namely `(n, p)`.
+
+[ErHa78] Erdős, P. and Hall, R. R., *On some unconventional problems on the divisors of
+integers*. J. Austral. Math. Soc. Ser. A 25 (1978), 479-485.
 -/
+
+@[expose] public section
 
 open scoped ArithmeticFunction.omega
 
 namespace Erdos1100
 
-/-- Copied verbatim from the formal-conjectures statement file. -/
+/-- $\tau_\perp(n)$ is the number of indices $i$ such that the divisors $d_i<d_{i+1}$ of $n$ that
+are consecutive in increasing order are coprime. As in `Erdos1099`, `Nat.nth (· ∣ n) i` is the
+$(i+1)$-th smallest divisor of `n` (counting from $0$), and `i` runs over the $\tau(n)-1$ pairs of
+consecutive divisors. For $n = 0$ and $n = 1$ there are no such pairs and the value is $0$. -/
 noncomputable def tauPerp (n : ℕ) : ℕ :=
   (Finset.univ.filter fun i : Fin (n.divisors.card - 1) ↦
     Nat.Coprime (Nat.nth (· ∣ n) i) (Nat.nth (· ∣ n) ((i : ℕ) + 1))).card
@@ -133,7 +141,7 @@ lemma S_append {L : List ℕ} {p : ℕ} (hp : 1 < p) (hL : 0 < L.length)
     have e1 : s + (i + 1) = t + i := by omega
     rw [e1, show t + i + 1 = t + (i + 1) by omega, ht, getD_append_right', getD_append_right', getD_map_mul, getD_map_mul]
     unfold c
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hcop
     have hdvd : p ∣ Nat.gcd (p * L.getD i 0) (p * L.getD (i + 1) 0) :=
       Nat.dvd_gcd (dvd_mul_right p _) (dvd_mul_right p _)
@@ -146,13 +154,13 @@ lemma S_append {L : List ℕ} {p : ℕ} (hp : 1 < p) (hL : 0 < L.length)
   rw [e4, getD_append_right', getD_map_mul, e3,
     getD_append_left' _ _ (by omega)]
   unfold c
-  rw [if_pos hbd]
+  rw [ite_eq_left hbd]
 
 lemma D_one : D 1 = [1] := by
   simp [D, Nat.divisors_one]
 
-/-- `erdos_1100.variants.eq_omega`, exactly as stated in formal-conjectures. -/
-theorem erdos_1100.variants.eq_omega (k : ℕ) :
+/-- The main result; `Solution.lean` restates it under the formal-conjectures name. -/
+theorem exists_squarefree_omega_eq_tauPerp (k : ℕ) :
     ∃ n : ℕ, Squarefree n ∧ ω n = k ∧ tauPerp n = k := by
   -- Strengthened statement carried through the induction.
   suffices h : ∃ n : ℕ, 0 < n ∧ Squarefree n ∧ ω n = k ∧ tauPerp n = k ∧

@@ -32,24 +32,29 @@ This is the observation of Erdős and Hall [ErHa78, p. 480]. Take primes `p₁ <
    (`S_append`).
 4. Induction on `k` from `n = 1`, choosing each new prime with `Nat.exists_infinite_primes`.
 
+## Layout
+
+This repository follows the [Palomar](https://palomar-registry.org/) submission layout.
+
+- `Challenge.lean`: the definition and statement, copied verbatim from formal-conjectures, with `sorry`.
+- `Solution.lean`: the same statement, proved.
+- `Erdos1100EqOmega/Basic.lean`: the proof development.
+- `comparator.json`: tells Comparator to check that `Solution` proves exactly the `Challenge`
+  statement, with the same `tauPerp`, using only `propext`, `Classical.choice` and `Quot.sound`.
+- `formalization.yaml`: metadata, including the AI-use record.
+
 ## Checking
 
 ```
 lake exe cache get
 lake build
-lake env lean Check/Axioms.lean
 ```
 
-The last command prints:
+There is no `sorry` outside `Challenge.lean`, no `native_decide`, and no custom axiom.
 
-```
-'Erdos1100.erdos_1100.variants.eq_omega' depends on axioms: [propext, Classical.choice, Quot.sound]
-```
-
-There is no `sorry`, no `native_decide`, and no custom axiom.
-
-Toolchain: Lean `v4.33.1`, Mathlib `0df444a360eaa60ab8c11dca51a86af692955474` (the versions pinned
-by formal-conjectures at the commit above).
+Toolchain: Lean `v4.35.0-rc2` and the matching Mathlib tag `v4.35.0-rc2`. The proof was first
+checked on Lean `v4.33.1` with Mathlib `0df444a360eaa60ab8c11dca51a86af692955474`, the versions
+pinned by formal-conjectures at commit `5c783f7`.
 
 ## AI disclosure
 

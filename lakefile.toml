@@ -1,13 +1,22 @@
 name = "erdos1100_eq_omega"
-defaultTargets = ["Erdos1100EqOmega"]
+version = "0.1.0"
+defaultTargets = ["Erdos1100EqOmega", "Challenge", "Solution"]
 
 [leanOptions]
 autoImplicit = false
 
 [[require]]
 name = "mathlib"
-git = "https://github.com/leanprover-community/mathlib4"
-rev = "0df444a360eaa60ab8c11dca51a86af692955474"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "v4.35.0-rc2"
 
 [[lean_lib]]
 name = "Erdos1100EqOmega"
+
+[[lean_lib]]
+name = "Challenge"
+roots = ["Challenge"]
+
+[[lean_lib]]
+name = "Solution"
+roots = ["Solution"]
